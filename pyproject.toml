@@ -16,7 +16,7 @@ dependencies = [
     "torch==2.6.0", "torchvision==0.21.0", "flash_attn==2.7.4.post1",
     "transformers==4.52.3", "tokenizers==0.21.1", "sentencepiece==0.2.0", "shortuuid",
     "accelerate==1.4.0", "peft", "bitsandbytes",
-    "pydantic", "markdown2[all]", "numpy", "scikit-learn==1.6.1",
+    "pydantic", "markdown2[all]", "numpy==1.26.4", "scikit-learn==1.6.1", "matplotlib",
     "gradio==5.42.0", "gradio_client==1.11.1",
     "requests", "httpx==0.28.1", "uvicorn", "fastapi==0.115.6",
     "einops==0.8.1", "einops-exts==0.0.4", "timm==0.9.16", "soundfile", "torchaudio", "deepspeed",

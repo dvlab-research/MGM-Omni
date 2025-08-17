@@ -1,0 +1,10 @@
+exps/
+work_dirs/
+work_dirs
+outputs/
+model_zoo
+data
+__pycache__
+*.pyc
+*.egg-info
+.gradio/

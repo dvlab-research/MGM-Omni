@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mgm"
+version = "1.0.0"
+description = "MGM-Omni: An open source Omni Model"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+]
+dependencies = [
+    "torch==2.6.0", "torchvision==0.21.0", "flash_attn==2.7.4.post1",
+    "transformers==4.52.3", "tokenizers==0.21.1", "sentencepiece==0.2.0", "shortuuid",
+    "accelerate==1.4.0", "peft", "bitsandbytes",
+    "pydantic", "markdown2[all]", "numpy", "scikit-learn==1.6.1",
+    "gradio==5.42.0", "gradio_client==1.11.1",
+    "requests", "httpx==0.28.1", "uvicorn", "fastapi==0.115.6",
+    "einops==0.8.1", "einops-exts==0.0.4", "timm==0.9.16", "soundfile", "torchaudio", "deepspeed",
+    "ninja", "wandb", "qwen_vl_utils", "openai-whisper", "ftfy", "numba", "jiwer", "moviepy",
+    "librosa", "opencc", "ffmpeg", "modelscope-studio",
+    "conformer==0.3.2", "diffusers==0.29.0", "hydra-core==1.3.2", "HyperPyYAML==1.2.2",
+    "lightning==2.2.4", "onnx==1.16.0", "onnxruntime-gpu==1.18.0",
+    "wetext==0.0.4", "wget==3.2", "gdown==5.1.0"
+]
+
+[project.optional-dependencies]
+build = ["build", "twine"]
+
+[project.urls]
+"Homepage" = "https://github.com/dvlab-research/MGM-Omni"
+"Bug Tracker" = "https://github.com/dvlab-research/MGM-Omni/issues"
+
+[tool.setuptools.packages.find]
+exclude = ["assets*", "benchmark*", "docs", "dist*", "playground*", "scripts*", "tests*", "data*", "model_zoo*", "work_dirs*", "project*"]
+
+[tool.wheel]
+exclude = ["assets*", "benchmark*", "docs", "dist*", "playground*", "scripts*", "tests*", "data*", "model_zoo*", "work_dirs*", "project*"]

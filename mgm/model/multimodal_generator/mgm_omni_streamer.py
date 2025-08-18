@@ -77,7 +77,7 @@ class MGMOmniStreamer(TextIteratorStreamer):
         try:
             token_offset = self.token_offset
             self.token_offset += self.this_hop_len
-            self.this_hop_len = self.hop_len
+            self.this_hop_len = self.hop_len * 2
             cur_audio = self.cosyvoice.token2wav(
                 token=self.speech_tokens[:, :self.token_offset + self.lookahead_len],
                 prompt_token=self.ref_tokens,

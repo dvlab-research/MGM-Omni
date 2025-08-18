@@ -536,7 +536,7 @@ Start chatting or generate voice responses with these options:
                     show_label=False
                 )
             with gr.Column(scale=3):
-                refer_speech = gr.Audio(sources=["upload", "microphone"],
+                refer_speech = gr.Audio(sources=["microphone", "upload"],
                                     type="filepath",
                                     label="Upload Reference Voice",
                                     elem_classes="media-upload",
@@ -577,7 +577,6 @@ Start chatting or generate voice responses with these options:
                     show_label=False,
                     allow_preview=False,
                     columns=3,  # Adjusted for sidebar width
-                    # rows=5,
                     height="auto",
                     object_fit="cover",
                     elem_classes="gallery_reference_example" 

@@ -407,7 +407,7 @@ def _launch_demo(args, tokenizer, tokenizer_speech, model, image_processor, audi
         thread.join()
 
 
-    def tts_predict(text, refer_speech, audio_input, talk_input, image_input, video_input, history, system_prompt,  autoplay):
+    def tts_predict(text, refer_speech, system_prompt, history, autoplay):
         # Process refer_speech input
         if refer_speech:
             refer_speech_text = whispers_asr(whispers_model, refer_speech)
@@ -470,7 +470,9 @@ def _launch_demo(args, tokenizer, tokenizer_speech, model, image_processor, audi
                     }
                     .gallery_reference_example .caption-label {
                         font-size: 12px !important;
-                        max-height: 70vh !important;
+                    }
+                    .gallery_reference_example {
+                        max-height: 60vh !important;
                     }
                     .small-radio {font-size: 14px !important;}
                     .right-align { display: flex; justify-content: flex-end; }
@@ -575,6 +577,7 @@ Start chatting or generate voice responses with these options:
                     show_label=False,
                     allow_preview=False,
                     columns=3,  # Adjusted for sidebar width
+                    # rows=5,
                     height="auto",
                     object_fit="cover",
                     elem_classes="gallery_reference_example" 
@@ -675,25 +678,25 @@ Start chatting or generate voice responses with these options:
         def clear_chat_history():
             return [], gr.update(value=None), gr.update(value=None), gr.update(value=None), gr.update(value=None), gr.update(value=None), gr.update(value=None), gr.update(value=None), gr.update(value="Text"), gr.update(value="Chat")
 
-        
-        def handle_submit(mode, *inputs):
-            if mode == "Chat":
-                yield from chat_predict(*inputs)
-            else:  # mode == "TTS"
-                yield from tts_predict(*inputs)
-        
         submit_event = gr.on(
-            triggers=[submit_btn.click, text_input.submit, tts_submit_btn.click], 
-            fn=handle_submit,
-            inputs=[
-                submit_mode_selector,
-                text_input, refer_speech, audio_input, talk_input, image_input, video_input, chatbot,
-                system_prompt_textbox, autoplay_checkbox
-            ],
-            outputs=[
-                text_input, refer_speech, audio_input, talk_input, image_input, video_input, audio_output, chatbot
-            ]
-        )
+                triggers=[submit_btn.click, text_input.submit],
+                fn=chat_predict,
+                inputs=[
+                    text_input, refer_speech, audio_input, talk_input, image_input, video_input, chatbot,
+                    system_prompt_textbox, autoplay_checkbox
+                ],
+                outputs=[
+                    text_input, refer_speech, audio_input, talk_input, image_input, video_input, audio_output, chatbot
+                ])
+        tts_submit_event = gr.on(
+                triggers=[tts_submit_btn.click],
+                fn=tts_predict,
+                inputs=[
+                    text_input, refer_speech, system_prompt_textbox, chatbot, autoplay_checkbox
+                ],
+                outputs=[
+                    text_input, refer_speech, audio_input, talk_input, image_input, video_input, audio_output, chatbot
+                ])
 
         def chat_switch_mode(mode):
             if mode == "Text":

@@ -561,6 +561,7 @@ Start chatting or generate voice responses with these options:
                     ("assets/ref_img/genshin_Kokomi.jpg", "assets/ref_audio/genshin_Kokomi.wav", "原神-珊瑚宫心海"),
                     ("assets/ref_img/genshin_Raiden.jpg", "assets/ref_audio/genshin_Raiden.wav", "原神-雷电将军"),
                     ("assets/ref_img/genshin_ZhongLi.jpg", "assets/ref_audio/genshin_ZhongLi.wav", "原神-钟离"),
+                    ("assets/ref_img/genshin_Hutao.jpg", "assets/ref_audio/genshin_Hutao.wav", "原神-胡桃"),
                     ("assets/ref_img/Wave_Jinhsi.jpg", "assets/ref_audio/Wave_Jinhsi.wav", "鸣潮-今汐"),
                     ("assets/ref_img/Wave_Carlotta.jpg", "assets/ref_audio/Wave_Carlotta.wav", "鸣潮-珂莱塔"),
                 ]

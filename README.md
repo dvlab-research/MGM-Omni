@@ -190,7 +190,7 @@ If you find this repo useful for your research, we would appreciate it if you co
   title={Mini-Gemini: Mining the Potential of Multi-modality Vision Language Models},
   author={Li, Yanwei and Zhang, Yuechen and Wang, Chengyao and Zhong, Zhisheng and Chen, Yixin and Chu, Ruihang and Liu, Shaoteng and Jia, Jiaya},
   journal={arXiv:2403.18814},
-  year={2023}
+  year={2024}
 }
 ```
 

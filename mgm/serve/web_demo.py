@@ -10,8 +10,7 @@ import gradio as gr
 
 import torch
 import numpy as np
-import queue
-import pdb
+import random
 
 import soundfile as sf 
 import librosa
@@ -53,8 +52,14 @@ def _launch_demo(args, tokenizer, tokenizer_speech, model, image_processor, audi
     default_system_prompt = 'You are MGM Omni, a virtual human developed by the Von Neumann Institute, capable of perceiving auditory and visual inputs, as well as generating text and speech.'
     pre_prompt_cn = '使用参考音频中听到的语气回答。'
     pre_prompt_en = 'Respond with the tone of the reference audio clip.'
-    default_speech_file = 'assets/ref_audio/Man_ZH.wav'
-    default_speech_text = '他疯狂寻找到能够让自己升级的办法终于有所收获那就是炼体。'
+    ref_chinese = [
+        ('assets/ref_audio/Man_ZH.wav', '他疯狂寻找到能够让自己升级的办法终于有所收获，那就是炼体。'),
+        ('assets/ref_audio/Woman_ZH.wav', '语音合成技术其实早已悄悄地走进了我们的生活。从智能语音助手到有声读物再到个性化语音复刻，这项技术正在改变我们获取信息，与世界互动的方式，而且他的进步速度远超我们的想象。')
+    ]
+    ref_english = [
+        ('assets/ref_audio/Man_EN.wav', '\"Incredible!\" Dr. Chen exclaimed, unable to contain her enthusiasm. \"The quantum fluctuations we have observed in these superconducting materials exhibit completely unexpected characteristics.\"'),
+        ('assets/ref_audio/Woman_EN.wav', 'The device would work during the day as well, if you took steps to either block direct sunlight or point it away from the sun.')
+    ]
     previous_turn_is_tts = False
     language = args.ui_language
     whispers_model = whisper.load_model("large-v3")
@@ -123,16 +128,18 @@ def _launch_demo(args, tokenizer, tokenizer_speech, model, image_processor, audi
         inp = ''
         image_files = []
         audio_files = []
-        ref_speech_file = default_speech_file
-        ref_speech_text = default_speech_text
+        ref_speech_file = None
+        ref_speech_text = None
 
         user_inp = ''
+        last_text_inp = ''
         for message in messages:
             if message['role'] == 'system':
                 conv.system = '<|im_start|>system\n' + message['content'][0]['text']
             elif message['role'] == 'user':
                 if isinstance(message['content'], str):
                     user_inp += message['content']
+                    last_text_inp = message['content']
                     conv.append_message(conv.roles[0], user_inp)
                     user_inp = ''
                 else:
@@ -158,6 +165,14 @@ def _launch_demo(args, tokenizer, tokenizer_speech, model, image_processor, audi
             conv.append_message(conv.roles[0], user_inp)
             user_inp = ''
         conv.append_message(conv.roles[1], None)
+
+        if ref_speech_file is None:
+            has_chinese = any('\u4e00' <= char <= '\u9fff' for char in last_text_inp)
+            if has_chinese:
+                ref_item = random.choice(ref_chinese)
+            else:
+                ref_item = random.choice(ref_english)
+            ref_speech_file, ref_speech_text = ref_item
 
         return conv, image_files, audio_files, ref_speech_file, ref_speech_text
 
@@ -265,12 +280,13 @@ def _launch_demo(args, tokenizer, tokenizer_speech, model, image_processor, audi
                 history = []
                 previous_turn_is_tts = False
         except:
-            history = []
             previous_turn_is_tts = False
 
         # Process text input
         if text:
             history.append({"role": "user", "content": text})
+        else:
+            text = ''
         
         # Process refer_speech input
         if refer_speech:
@@ -281,17 +297,19 @@ def _launch_demo(args, tokenizer, tokenizer_speech, model, image_processor, audi
         if talk_inp:
             history.append({"role": "user", "content": (talk_inp, )})
 
-        # Process audio input
-        # if audio:
-        #     history.append({"role": "user", "content": (audio, )})
-
-        # # Process image input
-        # if image:
-        #     history.append({"role": "user", "content": (image, )})
-
-        # # Process video input
-        # if video:
-        #     history.append({"role": "user", "content": (video, )})
+        # assign refer_speech
+        has_refer_speech = False
+        for item in history:
+            if isinstance(item['content'], tuple):
+                has_refer_speech |= (len(item['content']) == 2)
+        if has_refer_speech == False:
+            has_chinese = any('\u4e00' <= char <= '\u9fff' for char in text)
+            if has_chinese:
+                ref_item = random.choice(ref_chinese)
+            else:
+                ref_item = random.choice(ref_english)
+            refer_speech, refer_speech_text = ref_item
+            history.append({"role": "user", "content": (refer_speech, refer_speech_text)})
 
         formatted_history = format_history(history=history,
                                            system_prompt=system_prompt)
@@ -317,9 +335,17 @@ def _launch_demo(args, tokenizer, tokenizer_speech, model, image_processor, audi
 
     def tts_run(messages):
         sample_rate = 24000
-        ref_speech_file = messages[2]['content'][0]['refer_speech']
-        ref_speech_text = messages[2]['content'][0]['ref_speech_text']
         target_text = messages[1]['content']
+        if len(messages) < 3:
+            has_chinese = any('\u4e00' <= char <= '\u9fff' for char in target_text)
+            if has_chinese:
+                ref_item = random.choice(ref_chinese)
+            else:
+                ref_item = random.choice(ref_english)
+            ref_speech_file, ref_speech_text = ref_item
+        else:
+            ref_speech_file = messages[2]['content'][0]['refer_speech']
+            ref_speech_text = messages[2]['content'][0]['ref_speech_text']
 
         # process refer audio
         audio_refer, _ = librosa.load(ref_speech_file, sr=16000)
@@ -386,8 +412,8 @@ def _launch_demo(args, tokenizer, tokenizer_speech, model, image_processor, audi
         if refer_speech:
             refer_speech_text = whispers_asr(whispers_model, refer_speech)
         else:
-            refer_speech = default_speech_file
-            refer_speech_text = default_speech_text
+            refer_speech = None
+            refer_speech_text = None
             for item in history:
                 if item["role"] == "user" and len(item["content"]) == 2:
                     refer_speech = item["content"][0]
@@ -400,10 +426,12 @@ def _launch_demo(args, tokenizer, tokenizer_speech, model, image_processor, audi
         if text:
             history.append({"role": "user", "content": text})
         else:
-            history.append({"role": "assistant", "content": "Don't forget to input text for speech synthesis."})
+            history.append({"role": "assistant", "content": "Don't forget to input text for text to speech synthesis."})
             yield gr.skip(), gr.skip(), gr.skip(), gr.skip(), gr.skip(), gr.skip(), None, history
             return
-        history.append({"role": "user", "content": (refer_speech, refer_speech_text)})
+
+        if refer_speech is not None:
+            history.append({"role": "user", "content": (refer_speech, refer_speech_text)})
 
         formatted_history = format_history(history=history,
                                            system_prompt=system_prompt)
@@ -451,11 +479,23 @@ def _launch_demo(args, tokenizer, tokenizer_speech, model, image_processor, audi
         gr.Markdown(
             """
             <div style="text-align: center; margin-bottom: 20px;">
-                <h1>MGM-Omni: An Open-source Omni Model</h1>
-                <p>Chat with the model. Upload audio, images, or videos as needed.</p>
+                <h1 style="margin-bottom: 8px;">MGM-Omni: An Open-source Omni Model</h1>
+                <div style="display: inline-flex; white-space: nowrap; gap: 8px; align-items: center; justify-content: center; overflow-x: auto;">
+                    <a href="https://github.com/dvlab-research/MGM-Omni" target="_blank" rel="noopener noreferrer">
+                        <img alt="Github" src="https://img.shields.io/badge/Github-000000?style=for-the-badge&logo=github&logoColor=white">
+                    </a>
+                    <a href="https://mgm-omni.notion.site/MGM-Omni-An-Open-source-Omni-Chatbot-2395728e0b0180149ac9f24683fc9907?source=copy_link" target="_blank" rel="noopener noreferrer">
+                        <img alt="Blog" src="https://img.shields.io/badge/Blog-000000.svg?style=for-the-badge&logo=notion&logoColor=white">
+                    </a>
+                    <a href="https://huggingface.co/collections/wcy1122/mgm-omni-6896075e97317a88825032e1" target="_blank" rel="noopener noreferrer">
+                        <img alt="Models" src="https://img.shields.io/badge/Models-000000?style=for-the-badge&logo=huggingface&logoColor=white">
+                    </a>
+                </div>
+                <p style="margin-top: 0; margin-bottom: 12px;">Chat with the model. Upload audio, images, or videos as needed.</p>
             </div>
             """
         )
+
         # Hidden components for handling uploads and outputs
         audio_input = gr.Audio(visible=True, type="filepath", elem_classes="container-display" )
         image_input = gr.Image(visible=True, type="filepath", elem_classes="container-display" )
@@ -472,14 +512,14 @@ def _launch_demo(args, tokenizer, tokenizer_speech, model, image_processor, audi
 
 Start chatting or generate voice responses with these options:  
 
-- 🎙️ **Reference Speech**: Upload or select an audio file to clone the voice. 
-- 📤 **Upload**: Upload video, image, or audio files .   
+- 🎙️ **Reference Voice**: Choose, upload or record an audio clip for voice clone.
+- 📤 **Upload**: Upload video, image, or audio files.   
 - ✍️ **Input Mode**:  
-  - **Text**: Type your message to chat.  
-  - **Talk**: Upload or record audio to interact.  
+  - **Text**: Type your message to chat.
+  - **Talk**: Record or upload audio to chat.  
 - 🚀 **Generate Mode**:  
-  - **Chat**: Engage in a conversation with the Vision-Language Model.  
-  - **TTS**: Convert text to speech using the cloned voice.  
+  - **Chat**: Engage in a conversation with MGM-Omni.  
+  - **TTS**: Text to speech generation with reference voice.
 
 **Get started by typing or uploading below!** 😊
 """
@@ -495,25 +535,28 @@ Start chatting or generate voice responses with these options:
             with gr.Column(scale=3):
                 refer_speech = gr.Audio(sources=["upload", "microphone"],
                                     type="filepath",
-                                    label="Upload Reference Speech",
+                                    label="Upload Reference Voice",
                                     elem_classes="media-upload",
-                                    value="assets/ref_audio/Man_EN.wav",
+                                    value=None,
                                     scale=0
                                     )
                 # Restore reference speech gallery in sidebar for better layout
-                gr.Markdown("### Reference Speech Examples")
+                gr.Markdown("### Voice Clone Examples")
                 refer_items = [
                     ("assets/ref_img/Man_ZH.jpg", "assets/ref_audio/Man_ZH.wav", "Man-ZH"),
                     ("assets/ref_img/Man_EN.jpg", "assets/ref_audio/Man_EN.wav", "Man-EN"),
+                    ("assets/ref_img/Woman_ZH.jpg", "assets/ref_audio/Woman_ZH.wav", "Woman-ZH"),
+                    ("assets/ref_img/Woman_EN.jpg", "assets/ref_audio/Woman_EN.wav", "Woman-EN"),
+                    ("assets/ref_img/Old_Woman_ZH.jpg", "assets/ref_audio/Old_Woman_ZH.wav", "Old-Woman-ZH"),
                     ("assets/ref_img/Musk.jpg", "assets/ref_audio/Musk.wav", "Elon Musk"),
                     ("assets/ref_img/Trump.jpg", "assets/ref_audio/Trump.wav", "Donald Trump"),
                     ("assets/ref_img/Jensen.jpg", "assets/ref_audio/Jensen.wav", "Jensen Huang"),
                     ("assets/ref_img/Lebron.jpg", "assets/ref_audio/Lebron.wav", "LeBron James"),
-                    ("assets/ref_img/Taiyi.jpg", "assets/ref_audio/Taiyi.wav", "Taiyi (太乙真人)"),
+                    ("assets/ref_img/jay.jpg", "assets/ref_audio/Jay.wav", "Jay Chou(周杰伦)"),
                     ("assets/ref_img/GEM.jpg", "assets/ref_audio/GEM.wav", "G.E.M.(邓紫棋)"),
-                    ("assets/ref_img/Zhiling.jpg", "assets/ref_audio/Zhiling.wav", "Lin Chi-Ling (林志玲)"),
-                    ("assets/ref_img/mabaoguo.jpg", "assets/ref_audio/mabaoguo.wav", "Ma Baoguo"),
-                    ("assets/ref_img/jay.jpg", "assets/ref_audio/jay.wav", "Jay"),
+                    ("assets/ref_img/Zhiling.jpg", "assets/ref_audio/Zhiling.wav", "Lin Chi-Ling(林志玲)"),
+                    ("assets/ref_img/mabaoguo.jpg", "assets/ref_audio/mabaoguo.wav", "Ma Baoguo(马保国)"),
+                    ("assets/ref_img/Taiyi.jpg", "assets/ref_audio/Taiyi.wav", "Taiyi(太乙真人)"),
                     ("assets/ref_img/StarRail_Firefly.jpg", "assets/ref_audio/StarRail_Firefly.wav", "崩铁-流萤"),
                     ("assets/ref_img/genshin_Kokomi.jpg", "assets/ref_audio/genshin_Kokomi.wav", "原神-珊瑚宫心海"),
                     ("assets/ref_img/genshin_Raiden.jpg", "assets/ref_audio/genshin_Raiden.wav", "原神-雷电将军"),
@@ -551,7 +594,7 @@ Start chatting or generate voice responses with these options:
                 )
                 clear_btn = gr.Button("Clear")
                 autoplay_checkbox = gr.Checkbox(
-                    label="Enable Autoplay",
+                    label="Autoplay",
                     value=True
                 )
 

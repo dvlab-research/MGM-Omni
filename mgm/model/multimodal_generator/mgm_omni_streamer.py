@@ -18,8 +18,8 @@ class MGMOmniStreamer(TextIteratorStreamer):
         self.cosyvoice = cosyvoice
         self.cosyvoice.hift_cache_dict[self.uuid] = None
         self.max_audio_token = max_audio_token - 2
-        self.hop_len = 256
-        self.this_hop_len = 256
+        self.hop_len = 100
+        self.this_hop_len = 100
         self.lookahead_len = self.cosyvoice.flow.pre_lookahead_len
         self.token_offset = 0
         self.speech_tokens = None
@@ -77,7 +77,7 @@ class MGMOmniStreamer(TextIteratorStreamer):
         try:
             token_offset = self.token_offset
             self.token_offset += self.this_hop_len
-            self.this_hop_len = self.hop_len * 2
+            self.this_hop_len = self.hop_len
             cur_audio = self.cosyvoice.token2wav(
                 token=self.speech_tokens[:, :self.token_offset + self.lookahead_len],
                 prompt_token=self.ref_tokens,

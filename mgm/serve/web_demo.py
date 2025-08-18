@@ -513,8 +513,13 @@ Start chatting or generate voice responses with these options:
                     ("assets/ref_img/GEM.jpg", "assets/ref_audio/GEM.wav", "G.E.M.(邓紫棋)"),
                     ("assets/ref_img/Zhiling.jpg", "assets/ref_audio/Zhiling.wav", "Lin Chi-Ling (林志玲)"),
                     ("assets/ref_img/mabaoguo.jpg", "assets/ref_audio/mabaoguo.wav", "Ma Baoguo"),
-                    ("assets/ref_img/genshin_sangonomiya_kokomi_zh_prompt.jpg", "assets/ref_audio/genshin_sangonomiya_kokomi_zh_prompt.wav", "sangonomiya"),
                     ("assets/ref_img/jay.jpg", "assets/ref_audio/jay.wav", "Jay"),
+                    ("assets/ref_img/StarRail_Firefly.jpg", "assets/ref_audio/StarRail_Firefly.wav", "崩铁-流萤"),
+                    ("assets/ref_img/genshin_Kokomi.jpg", "assets/ref_audio/genshin_Kokomi.wav", "原神-珊瑚宫心海"),
+                    ("assets/ref_img/genshin_Raiden.jpg", "assets/ref_audio/genshin_Raiden.wav", "原神-雷电将军"),
+                    ("assets/ref_img/genshin_ZhongLi.jpg", "assets/ref_audio/genshin_ZhongLi.wav", "原神-钟离"),
+                    ("assets/ref_img/Wave_Jinhsi.jpg", "assets/ref_audio/Wave_Jinhsi.wav", "鸣潮-今汐"),
+                    ("assets/ref_img/Wave_Carlotta.jpg", "assets/ref_audio/Wave_Carlotta.wav", "鸣潮-珂莱塔"),
                 ]
                 gallery_items = [(img, label) for img, _, label in refer_items]
                 

@@ -52,8 +52,8 @@ class MGMOmniStreamer(TextIteratorStreamer):
 
     def set_refer_speech(self, refer_speech):
         self.ref_tokens, self.ref_feat, self.ref_embedding = refer_speech
-        prompt_token_pad = int(np.ceil(self.ref_tokens.shape[1] / self.hop_len) * self.hop_len - self.ref_tokens.shape[1])
-        self.this_hop_len += prompt_token_pad
+        self.prompt_token_pad = int(np.ceil(self.ref_tokens.shape[1] / self.hop_len) * self.hop_len - self.ref_tokens.shape[1])
+        self.this_hop_len += self.prompt_token_pad
 
     def _audio_processor(self):
         while not self._shutdown:
@@ -78,8 +78,9 @@ class MGMOmniStreamer(TextIteratorStreamer):
         try:
             token_offset = self.token_offset
             self.token_offset += self.this_hop_len
-            self.this_hop_len = min(self.hop_len * self.block_rate, 3200)
-            self.block_rate *= 2
+            self.this_hop_len = min(self.hop_len * self.block_rate, 1600)
+            self.block_rate = min(self.block_rate * 2, 15)
+            finalize |= (self.token_offset > 6000)
             cur_audio = self.cosyvoice.token2wav(
                 token=self.speech_tokens[:, :self.token_offset + self.lookahead_len],
                 prompt_token=self.ref_tokens,
@@ -92,6 +93,11 @@ class MGMOmniStreamer(TextIteratorStreamer):
             ).detach().squeeze().cpu()
             self.audio = cur_audio if self.audio is None else torch.cat((self.audio, cur_audio), dim=0)
             self.out_q.put(("audio", cur_audio.numpy()))
+            if self.token_offset > 6000:
+                self.speech_tokens = self.speech_tokens[:, self.token_offset:]
+                self.token_offset = 0
+                self.this_hop_len = (self.this_hop_len // 2) + self.prompt_token_pad
+                self.cosyvoice.hift_cache_dict[self.uuid] = None
         except Exception as e:
             print(f"Error in audio processing: {e}")
 

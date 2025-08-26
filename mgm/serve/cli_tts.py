@@ -2,6 +2,7 @@ import argparse
 import os
 import copy
 import json
+import time
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -73,6 +74,7 @@ def main(args):
         input_ids = tokenizer_speech_token(prompt, tokenizer, return_tensors='pt').unsqueeze(0).to(model.device)
 
         streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
+        start_time = time.time()
         with torch.inference_mode():
             speech_ids, audio = model.generate(
                 input_ids.clone(),
@@ -87,8 +89,15 @@ def main(args):
                 streamer=streamer,
                 tokenizer=tokenizer,
                 use_cache=True)
-
-            sf.write(args.out_path, audio, 24000)
+        
+        run_time = time.time() - start_time
+        audio_time = audio.shape[0] / 24000
+        rtf = run_time / audio_time
+        print(f"Speech tokens: {speech_ids.shape[1]}")
+        print(f"Run time: {run_time:.2f} seconds")
+        print(f"Audio duration: {audio_time:.2f} seconds")
+        print(f"RTF (Real Time Factor): {rtf:.2f}x")
+        sf.write(args.out_path, audio, 24000)
 
 
 if __name__ == "__main__":

@@ -29,7 +29,8 @@ def main(args):
     # prepare model
     model_path = os.path.expanduser(args.model)
     tokenizer, model = load_pretrained_model(
-        model_path, args.load_8bit, args.load_4bit, device=args.device)
+        model_path, args.load_8bit, args.load_4bit, device=args.device,
+        cosyvoice_path=args.cosyvoice_path)
 
     # prepare refer audio file
     if args.ref_audio is None:
@@ -102,7 +103,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", type=str, default="wcy1122/MGM-Omni-TTS-2B")
+    parser.add_argument("--model", type=str, default="wcy1122/MGM-Omni-TTS-2B-0927")
     parser.add_argument("--ref-audio", type=str, default="assets/ref_audio/Man_EN.wav")
     parser.add_argument("--ref-audio-text", type=str, default=None)
     parser.add_argument("--out-path", type=str, default="outputs/clone.wav")

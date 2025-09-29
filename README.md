@@ -30,11 +30,14 @@ We present MGM-Omni, an omni-chatbot capable of processing text, image, video, a
 
 
 ## News
+- [9/30] 🔥 The [technical report](https://arxiv.org/abs/2412.09501) for MGM-Omni is avaliabe at arxiv.
+- [9/29] 🔥 We release [Long-TTS-Eval](https://huggingface.co/datasets/wcy1122/Long-TTS-Eval), a benchmark for evaluating long-form and complex text-to-speech generation.
+- [9/27] 🔥 We release [MGM-Omni-TTS-2B-0927](https://huggingface.co/wcy1122/MGM-Omni-TTS-2B-0927), a stronger SpeechLM with more robust speech output.
 - [8/18] 🔥 MGM-Omni is coming! We release the [blog post](https://mgm-omni.notion.site/MGM-Omni-An-Open-source-Omni-Chatbot-2395728e0b0180149ac9f24683fc9907?source=copy_link), [demo](https://huggingface.co/spaces/wcy1122/MGM-Omni), [model](https://huggingface.co/collections/wcy1122/mgm-omni-6896075e97317a88825032e1) and [code](https://github.com/dvlab-research/MGM-Omni). More code and data will be released later!
 
 
 ## TODO
-- [ ] Arxiv preprint
+- [x] Arxiv preprint
 - [ ] Training and Fine-tuning code
 - [ ] Training data
 
@@ -66,7 +69,7 @@ Generate audio that sounds similar as the provided reference audio.
 
 ```bash
 python -m mgm.serve.cli_tts \
---model wcy1122/MGM-Omni-TTS-2B \
+--model wcy1122/MGM-Omni-TTS-2B-0927 \
 --ref-audio assets/ref_audio/Man_EN.wav
 ```
 
@@ -80,7 +83,7 @@ Add `--ref-audio-text` for a more accurate reference audio transcript. Otherwise
 ```bash
 python -m mgm.serve.cli \
 --model wcy1122/MGM-Omni-7B \
---speechlm wcy1122/MGM-Omni-TTS-2B
+--speechlm wcy1122/MGM-Omni-TTS-2B-0927
 ```
 
 Add `--ref-audio` and `--ref-audio-text` (optional) if you want MGM-Omni to response with a specific voice.
@@ -90,7 +93,7 @@ Add `--ref-audio` and `--ref-audio-text` (optional) if you want MGM-Omni to resp
 ```bash
 python -m mgm.serve.cli \
 --model wcy1122/MGM-Omni-7B \
---speechlm wcy1122/MGM-Omni-TTS-2B \
+--speechlm wcy1122/MGM-Omni-TTS-2B-0927 \
 --image-file assets/examples/ronaldo.jpg
 ```
 
@@ -101,7 +104,7 @@ To explore more modality, use `--video-file` for video input and `--audio-file` 
 ```bash
 python -m mgm.serve.cli \
 --model wcy1122/MGM-Omni-7B \
---speechlm wcy1122/MGM-Omni-TTS-2B \
+--speechlm wcy1122/MGM-Omni-TTS-2B-0927 \
 --image-file assets/examples/ronaldo.jpg \
 --audio-file assets/examples/instruct.wav
 ```
@@ -113,7 +116,7 @@ For Multi Modality input, use `--image-file`, `--video-file` and `--audio-file` 
 ```bash
 python -m mgm.serve.web_demo \
 --model wcy1122/MGM-Omni-7B \
---speechlm wcy1122/MGM-Omni-TTS-2B
+--speechlm wcy1122/MGM-Omni-TTS-2B-0927
 ```
 
 Use this command to lunch a gradio demo locally.

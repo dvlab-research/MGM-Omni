@@ -150,7 +150,7 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", type=str, default="wcy1122/MGM-Omni-7B")
-    parser.add_argument("--speechlm", type=str, default="wcy1122/MGM-Omni-TTS-2B")
+    parser.add_argument("--speechlm", type=str, default="wcy1122/MGM-Omni-TTS-2B-0927")
     parser.add_argument("--ref-audio", type=str, default="assets/ref_audio/Man_EN.wav")
     parser.add_argument("--ref-audio-text", type=str, default=None)
     parser.add_argument("--out-path", type=str, default="outputs/chat.wav")

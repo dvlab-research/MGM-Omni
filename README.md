@@ -30,7 +30,7 @@ We present MGM-Omni, an omni-chatbot capable of processing text, image, video, a
 
 
 ## News
-- [9/30] 🔥 The [technical report](https://arxiv.org/abs/2412.09501) for MGM-Omni is avaliabe at arxiv.
+- [9/30] 🔥 The [technical report](https://arxiv.org/abs/2509.xxxxx) for MGM-Omni is avaliabe at arxiv.
 - [9/29] 🔥 We release [Long-TTS-Eval](https://huggingface.co/datasets/wcy1122/Long-TTS-Eval), a benchmark for evaluating long-form and complex text-to-speech generation.
 - [9/27] 🔥 We release [MGM-Omni-TTS-2B-0927](https://huggingface.co/wcy1122/MGM-Omni-TTS-2B-0927), a stronger SpeechLM with more robust speech output.
 - [8/18] 🔥 MGM-Omni is coming! We release the [blog post](https://mgm-omni.notion.site/MGM-Omni-An-Open-source-Omni-Chatbot-2395728e0b0180149ac9f24683fc9907?source=copy_link), [demo](https://huggingface.co/spaces/wcy1122/MGM-Omni), [model](https://huggingface.co/collections/wcy1122/mgm-omni-6896075e97317a88825032e1) and [code](https://github.com/dvlab-research/MGM-Omni). More code and data will be released later!
@@ -184,12 +184,11 @@ We provide some examples in our [blog post](https://mgm-omni.notion.site/MGM-Omn
 ## Citation
 If you find this repo useful for your research, we would appreciate it if you could cite our work 😊:
 ```
-@misc{wang2025mgmomni,
-  title={MGM-Omni: An Open-source Omni Chatbot},
-  author={Wang, Chengyao and Zhong, Zhisheng and Peng, Bohao and Yang, Senqiao and Liu, Yuqi and Yu, Bei and Jia, Jiaya},
-  year={2025},
-  howpublished={\url{https://mgm-omni.notion.site}},
-  note={Notion Blog}
+@article{wang2025mgmomni,
+  title={MGM-Omni: Scaling Omni LLMs to Personalized Long-Horizon Speech},
+  author={Wang, Chengyao and Zhong, Zhisheng and Peng, Bohao and Yang, Senqiao and Liu, Yuqi and Gui, Haokun and Xia, Bin and Li, Jingyao and Yu, Bei and Jia, Jiaya},
+  journal={arXiv:2509.xxxxx},
+  year={2025}
 }
 
 @inproceedings{zhong2025lyra,

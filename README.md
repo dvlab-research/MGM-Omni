@@ -4,7 +4,7 @@
 
 <div align="center">
 
-# MGM-Omni: An Open-source Omni Chatbot</span>
+# MGM-Omni: Scaling Omni LLMs to Personalized Long-Horizon Speech</span>
 
 [![Paper](https://img.shields.io/badge/Paper-000000?style=for-the-badge&logo=arxiv&logoColor=000&logoColor=white)](https://arxiv.org/abs/2509.25131)
 [![Blog](https://img.shields.io/badge/Blog-000000.svg?style=for-the-badge&logo=notion&logoColor=white)](https://mgm-omni.notion.site/MGM-Omni-An-Open-source-Omni-Chatbot-2395728e0b0180149ac9f24683fc9907?source=copy_link)

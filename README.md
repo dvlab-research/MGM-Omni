@@ -6,8 +6,7 @@
 
 # MGM-Omni: An Open-source Omni Chatbot</span>
 
-[![Github](https://img.shields.io/badge/Github-000000?style=for-the-badge&logo=github&logoColor=000&logoColor=white)](https://github.com/dvlab-research/MGM-Omni)
-[![Paper](https://img.shields.io/badge/Paper-000000?style=for-the-badge&logo=arxiv&logoColor=000&logoColor=white)](https://arxiv.org/abs/2509.xxxxx)
+[![Paper](https://img.shields.io/badge/Paper-000000?style=for-the-badge&logo=arxiv&logoColor=000&logoColor=white)](https://arxiv.org/abs/2509.25131)
 [![Blog](https://img.shields.io/badge/Blog-000000.svg?style=for-the-badge&logo=notion&logoColor=white)](https://mgm-omni.notion.site/MGM-Omni-An-Open-source-Omni-Chatbot-2395728e0b0180149ac9f24683fc9907?source=copy_link)
 [![Models](https://img.shields.io/badge/Models-000000?style=for-the-badge&logo=huggingface&logoColor=white)](https://huggingface.co/collections/wcy1122/mgm-omni-6896075e97317a88825032e1)
 [![Benchmark](https://img.shields.io/badge/Benchmark-000000?style=for-the-badge&logo=huggingface&logoColor=white)](https://huggingface.co/datasets/wcy1122/Long-TTS-Eval)
@@ -32,7 +31,7 @@ We present MGM-Omni, an omni-chatbot capable of processing text, image, video, a
 
 
 ## News
-- [9/30] 🔥 The [technical report](https://arxiv.org/abs/2509.xxxxx) for MGM-Omni is available at arxiv.
+- [9/30] 🔥 The [technical report](https://arxiv.org/abs/2509.25131) for MGM-Omni is available at arxiv.
 - [9/29] 🔥 We release [Long-TTS-Eval](https://huggingface.co/datasets/wcy1122/Long-TTS-Eval), a benchmark for evaluating long-form and complex TTS.
 - [9/27] 🔥 We release [MGM-Omni-TTS-2B-0927](https://huggingface.co/wcy1122/MGM-Omni-TTS-2B-0927), a stronger SpeechLM with more robust speech output.
 - [8/18] 🔥 MGM-Omni is coming! We release the [blog post](https://mgm-omni.notion.site/MGM-Omni-An-Open-source-Omni-Chatbot-2395728e0b0180149ac9f24683fc9907?source=copy_link), [demo](https://huggingface.co/spaces/wcy1122/MGM-Omni), [model](https://huggingface.co/collections/wcy1122/mgm-omni-6896075e97317a88825032e1) and [code](https://github.com/dvlab-research/MGM-Omni). More code and data will be released later!
@@ -40,6 +39,7 @@ We present MGM-Omni, an omni-chatbot capable of processing text, image, video, a
 
 ## TODO
 - [x] Arxiv preprint
+- [x] Long TTS benchmark
 - [ ] Training and Fine-tuning code
 - [ ] Training data
 
@@ -189,7 +189,7 @@ If you find this repo useful for your research, we would appreciate it if you co
 @article{wang2025mgmomni,
   title={MGM-Omni: Scaling Omni LLMs to Personalized Long-Horizon Speech},
   author={Wang, Chengyao and Zhong, Zhisheng and Peng, Bohao and Yang, Senqiao and Liu, Yuqi and Gui, Haokun and Xia, Bin and Li, Jingyao and Yu, Bei and Jia, Jiaya},
-  journal={arXiv:2509.xxxxx},
+  journal={arXiv:2509.25131},
   year={2025}
 }
 

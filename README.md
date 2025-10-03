@@ -173,12 +173,21 @@ This table presents evaluation results on AIR-Bench Chat (speech, sound, music, 
 | Qwen2.5-Omni-7B | 2025-03 | 2B         | 1.42     | 0.754     | 2.33     | 0.641     |
 | MOSS-TTSD-v0    | 2025-06 | 2B         | 2.18     | 0.594     | 2.46     | 0.476     |
 | HiggsAudio-v2   | 2025-07 | 6B         | 1.66     | 0.743     | 2.44     | 0.677     |
-| **MGM-Omni**    | 2025-08 | 0.6B       | 1.49     | 0.749     | 2.54     | 0.670     |
-| **MGM-Omni**    | 2025-08 | 2B         | 1.38     | 0.753     | 2.28     | 0.682     |
-| **MGM-Omni**    | 2025-08 | 4B         | **1.34** | **0.756** | **2.22** | **0.684** |
+| **MGM-Omni**    | 2025-08 | 0.6B       | 1.42     | 0.750     | 2.48     | 0.670     |
+| **MGM-Omni**    | 2025-08 | 2B         | 1.28     | 0.755     | 2.28     | 0.684     |
+| **MGM-Omni**    | 2025-08 | 4B         | **1.18** | **0.758** | **2.22** | **0.686** |
 
 This table presents evaluation results on speech generation on seed-tts-eval.
 For Qwen2.5-Omni, model size refers to the size of the talker.
+
+| Model             | Date    | Model Size | EN WER↓  | ZH CER↓  | EN-hard WER↓ | ZH-hard WER↓ |
+|:------------------|:--------|:-----------|:---------|:---------|:-------------|:-------------|
+| CosyVoice2(chunk) | 2024-12 | 0.5B       | 14.80    | **5.27** | 42.48        | 32.76        |
+| MOSS-TTSD-v0.5    | 2025-06 | 6B         | 8.69     | 6.82     | 62.61        | 62.97        |
+| HiggsAudio-v2     | 2025-07 | 6B         | 27.09    | 31.39    | 98.61        | 98.85        |
+| **MGM-Omni**      | 2025-08 | 2B         | **4.98** | 5.58     | **26.26**    | **23.58**    |
+
+This table presents evaluation results on long-form and hard speech generation on long-tts-eval.
 
 ### Demo
 We provide some examples in our [blog post](https://mgm-omni.notion.site/MGM-Omni-An-Open-source-Omni-Chatbot-2395728e0b0180149ac9f24683fc9907?source=copy_link). If you want to explore more, welcome to try our [web demo](https://huggingface.co/spaces/wcy1122/MGM-Omni)!
@@ -187,10 +196,10 @@ We provide some examples in our [blog post](https://mgm-omni.notion.site/MGM-Omn
 ## Citation
 If you find this repo useful for your research, we would appreciate it if you could cite our work 😊:
 ```
-@article{wang2025mgmomni,
+@article{wang2025mgm,
   title={MGM-Omni: Scaling Omni LLMs to Personalized Long-Horizon Speech},
   author={Wang, Chengyao and Zhong, Zhisheng and Peng, Bohao and Yang, Senqiao and Liu, Yuqi and Gui, Haokun and Xia, Bin and Li, Jingyao and Yu, Bei and Jia, Jiaya},
-  journal={arXiv:2509.25131},
+  journal={arXiv preprint arXiv:2509.25131},
   year={2025}
 }
 

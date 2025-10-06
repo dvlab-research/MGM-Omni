@@ -8,6 +8,7 @@ from num2words import num2words
 from tqdm import tqdm
 import multiprocessing as mp
 import torch
+from datasets import load_dataset
 
 import soundfile as sf
 import scipy
@@ -41,7 +42,6 @@ def calc_wer(hypo, truth):
 
 
 def normalize_text(text, language='en'):
-    # text = re.sub(r'\d+', lambda m: num2words(int(m.group(0)), lang=('zh' if language == 'zh' else 'en')), text)
     try:
         text = re.sub(r'\d+', lambda m: f" {num2words(int(m.group(0)), lang=('zh' if language == 'zh' else 'en'))} ", text)
     except:
@@ -132,53 +132,77 @@ def process_chunk(args):
     return process_results
 
 
+def load_split(
+    data_path = "wcy1122/Long-TTS-Eval",
+    split = "long_tts_eval_en"
+):
+    ds = load_dataset(data_path, split=split)
+    data = ds.to_list()
+    text_dict = dict()
+    for item in data:
+        text_dict[item['id']] = (item['text'], item['text_norm'])
+    return text_dict
+
+
 def main():
     parser = argparse.ArgumentParser(description="Evaliation on long TTS")
-    parser.add_argument("--evaluation-file", type=str)
+    parser.add_argument("--data-path", type=str)
     parser.add_argument("--output-dir", type=str)
-    parser.add_argument("--language", type=str, default='en')
+    parser.add_argument("--split", type=str, default=None)
     args = parser.parse_args()
 
-    evaluation_file = args.evaluation_file
+    data_path = args.data_path
     output_dir = args.output_dir
-    language = args.language
+    split = args.split
 
-    text_dict = dict()
-    with open(evaluation_file, 'r', encoding='utf-8') as f:
-        for line in f:
-            item = json.loads(line)
-            text_dict[item['id']] = (item['text'], item['text_norm'])
-
-    audio_dir = os.path.join(output_dir, 'samples', language)
-    audio_paths = glob.glob(os.path.join(audio_dir, '*.wav')) 
-    audio_paths.sort()
-    print('Evaluate', len(audio_paths), 'audio files')
+    if split is None:
+        splits = ['long_tts_eval_en', 'long_tts_eval_zh', 'hard_tts_eval_en', 'hard_tts_eval_zh']
+    else:
+        splits = [split]
     
-    # process_chunk((audio_paths, 1, language, text_dict))
-
-    chunk_num = 16
-    chunks = [audio_paths[i::chunk_num] for i in range(chunk_num)]
-    args = [(chunk, i, language, text_dict) for i, chunk in enumerate(chunks)]
-    with mp.Pool(processes=chunk_num) as pool:
-        results_from_pool = pool.map(process_chunk, args)
+    results_all = dict()
     
-    total_wer = 0
-    total_words = 0
-    result_all = []
-    for process_result_list in results_from_pool:
-        for result in process_result_list:
-            result_all.append(result)
-            total_wer += result['wer'] * result['word_count']
-            total_words += result['word_count']
-    
-    print('WER:', total_wer / total_words)
-    result_all.append(dict(
-        size=len(result_all),
-        wer=total_wer / total_words,
-    ))
+    for split in splits:
 
-    output_path = os.path.join(output_dir, f"wer_{language}.json")
-    json.dump(result_all, open(output_path, "w"), indent=2, ensure_ascii=False)
+        audio_dir = os.path.join(output_dir, 'samples', split)
+        if not os.path.exists(audio_dir):
+            print(f"Speech file for [{split}] split does not exist!")
+            continue
+        audio_paths = glob.glob(os.path.join(audio_dir, '*.wav')) 
+        audio_paths.sort()
+        print('Evaluate', split, 'split with', len(audio_paths), 'audio files')
+
+        language = 'en' if 'en' in split else 'zh'
+        text_dict = load_split(data_path, split)
+
+        chunk_num = min(16, torch.cuda.device_count() * 2)
+        chunks = [audio_paths[i::chunk_num] for i in range(chunk_num)]
+        args = [(chunk, i, language, text_dict) for i, chunk in enumerate(chunks)]
+        with mp.Pool(processes=chunk_num) as pool:
+            results_from_pool = pool.map(process_chunk, args)
+    
+        total_wer = 0
+        total_words = 0
+        result_all = []
+        for process_result_list in results_from_pool:
+            for result in process_result_list:
+                result_all.append(result)
+                total_wer += result['wer'] * result['word_count']
+                total_words += result['word_count']
+
+        wer = total_wer / total_words
+        print('WER:', wer)
+        results_all[split] = wer
+        result_all.append(dict(
+            size=len(result_all),
+            wer=wer,
+        ))
+        output_path = os.path.join(output_dir, f"wer_{split}.json")
+        json.dump(result_all, open(output_path, "w"), indent=2, ensure_ascii=False)
+    
+    print("Final Results:")
+    for split in splits:
+        print(f"{split}: {results_all[split]}")
 
 
 if __name__ == '__main__':

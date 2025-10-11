@@ -22,7 +22,6 @@ import onnxruntime
 import torchaudio.compliance.kaldi as kaldi
 import whisper
 
-
 class CosyVoice2:
 
     def __init__(self, model_dir, fp16=False, **kwargs):
